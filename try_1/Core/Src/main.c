@@ -102,14 +102,14 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /*
+
     if (HAL_GPIO_ReadPin(KEY_GPIO_Port, KEY_Pin))
     {
       HAL_Delay(20);
       while (HAL_GPIO_ReadPin(KEY_GPIO_Port, KEY_Pin)) {}
       HAL_Delay(1);
       flag = !flag;
-    }*/
+    }
 
 
     /*
@@ -147,7 +147,7 @@ int main(void)
 
 
 
-    if (flag)
+    /*if (flag)
     {
       HAL_GPIO_WritePin(LEDG_GPIO_Port, LEDG_Pin, GPIO_PIN_SET);
       HAL_Delay(100);
@@ -170,7 +170,7 @@ int main(void)
       HAL_GPIO_WritePin(LEDG_GPIO_Port, LEDG_Pin, GPIO_PIN_SET);
       HAL_Delay(100);
     }
-
+    */
 
 
 
