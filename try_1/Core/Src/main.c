@@ -170,6 +170,7 @@ int main(void)
       HAL_Delay(100);
       HAL_GPIO_WritePin(LEDG_GPIO_Port, LEDG_Pin, GPIO_PIN_SET);
       HAL_Delay(100);
+
     }
 
 
