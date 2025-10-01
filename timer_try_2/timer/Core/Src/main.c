@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "tim.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -43,19 +44,11 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-uint32_t ticks;
-uint32_t flag = 0;
-uint32_t clock = 0;
-uint8_t key_lock = 1;
-uint32_t ticks_1=0,ticks_2=0;
-uint32_t key_pressed = 0;
-uint32_t last_key_time = 0;
 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -94,114 +87,22 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
-
+  HAL_TIM_Base_Start(&htim1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
   while (1)
   {
-
-    if (HAL_GPIO_ReadPin(KEY_GPIO_Port, KEY_Pin))
+    if (__HAL_TIM_GET_COUNTER(&htim1) > __HAL_TIM_GET_AUTORELOAD(&htim1)/2)
     {
-      HAL_Delay(20);
-      while (HAL_GPIO_ReadPin(KEY_GPIO_Port, KEY_Pin)) {}
-      HAL_Delay(1);
-      flag = !flag;
-    }
-
-
-    /*
-    if (HAL_GPIO_ReadPin(KEY_GPIO_Port, KEY_Pin))
-    {
-      ticks_1 = HAL_GetTick();
-    }
-    while (HAL_GPIO_ReadPin(KEY_GPIO_Port, KEY_Pin)) {}
-    ticks_2 = HAL_GetTick();
-    if (ticks_2-ticks_1 > 100)
-    {
-      flag = !flag;
-    }
-    */
-
-
-
-    /*
-    uint8_t current_key_state = HAL_GPIO_ReadPin(KEY_GPIO_Port, KEY_Pin);
-
-    if (current_key_state && !key_pressed)
-    {
-      if ((HAL_GetTick() - last_key_time) > 50) // 50ms消抖
-      {
-        flag = !flag;
-        key_pressed = 1;
-        last_key_time = HAL_GetTick();
-      }
-    }
-    else if (!current_key_state)
-    {
-      key_pressed = 0;
-    }
-    */
-
-
-
-    if (flag)
-    {
-      HAL_GPIO_WritePin(LEDG_GPIO_Port, LEDG_Pin, GPIO_PIN_SET);
-      HAL_Delay(100);
-      HAL_GPIO_WritePin(LEDR_GPIO_Port, LEDR_Pin, GPIO_PIN_SET);
-      HAL_Delay(100);
-      ticks = HAL_GetTick();
-      HAL_GPIO_WritePin(LEDR_GPIO_Port, LEDR_Pin, GPIO_PIN_RESET);
-      HAL_Delay(100);
-      HAL_GPIO_WritePin(LEDR_GPIO_Port, LEDR_Pin, GPIO_PIN_SET);
-      HAL_Delay(100);
+      HAL_GPIO_WritePin(LEDG_GPIO_Port, LEDG_Pin, GPIO_PIN_RESET);
     } else
     {
       HAL_GPIO_WritePin(LEDG_GPIO_Port, LEDG_Pin, GPIO_PIN_SET);
-      HAL_Delay(100);
-      HAL_GPIO_WritePin(LEDR_GPIO_Port, LEDR_Pin, GPIO_PIN_SET);
-      HAL_Delay(100);
-      ticks = HAL_GetTick();
-      HAL_GPIO_WritePin(LEDG_GPIO_Port, LEDG_Pin, GPIO_PIN_RESET);
-      HAL_Delay(100);
-      HAL_GPIO_WritePin(LEDG_GPIO_Port, LEDG_Pin, GPIO_PIN_SET);
-      HAL_Delay(100);
-
     }
-
-
-  /*-------- 1. 按键检测（阻塞等待松手） --------*/
-//     uint8_t key = HAL_GPIO_ReadPin(KEY_GPIO_Port, KEY_Pin);
-//     if (key_lock && key == 0)      // 假设按键按下为低电平
-//     {
-//       HAL_Delay(50);             // 简单消抖
-//       if (HAL_GPIO_ReadPin(KEY_GPIO_Port, KEY_Pin) == 0)
-//       {
-//         flag = !flag;          // 翻转状态
-//         key_lock = 0;          // 进入“等待松手”
-//       }
-//     }
-//     if (key == 1) key_lock = 1;    // 已松手，允许下一次触发
-//
-//     /*-------- 2. 根据 flag 闪灯（阻塞 1 s） --------*/
-//     if (flag)                      // 红灯阶段
-//     {
-//       HAL_GPIO_WritePin(LEDG_GPIO_Port, LEDG_Pin, GPIO_PIN_SET); // 确保绿灯灭
-//       HAL_GPIO_TogglePin(LEDR_GPIO_Port, LEDR_Pin);
-//       HAL_Delay(1000);
-//     }
-//     else                           // 绿灯阶段
-//     {
-//       HAL_GPIO_WritePin(LEDR_GPIO_Port, LEDR_Pin, GPIO_PIN_SET); // 确保红灯灭
-//       HAL_GPIO_TogglePin(LEDG_GPIO_Port, LEDG_Pin);
-//       HAL_Delay(1000);
-//     }
-
-
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
